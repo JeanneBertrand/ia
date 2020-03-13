@@ -48,7 +48,7 @@ Predicat principal de l'algorithme :
 %*******************************************************************************
 
 main:-
-    initial_final_state(S0),
+    initial_state(S0),
     heuristique(S0,H0),
     
 	% initialisations Pf, Pu et Q 
@@ -77,15 +77,18 @@ main:-
 */
 %*******************************************************************************
 
-aetoile(Pf,Pu,_) :- 
-    empty(Pf), 
-    empty(Pu),
-    writeln("PAS DE SOLUTION : etat final non atteignable").
+
 aetoile(_,Pu,Q) :- 
     final_state(Fin), 
     belongs([Fin,[F1,H1,G1],P, A], Pu),
     insert([Fin,[F1,H1,G1],P,A],Q,Q1),
+    write("solution : "),
     affiche_solution(Fin,Pu,Q1).
+
+aetoile(Pf,Pu,_) :- 
+    empty(Pf), 
+    empty(Pu),
+    writeln("PAS DE SOLUTION : etat final non atteignable").
 
 aetoile(Pf, Ps, Qs) :-
     %suppression de U
@@ -93,9 +96,9 @@ aetoile(Pf, Ps, Qs) :-
     suppress_min([Val, U], Pf, New_Pf), 
     suppress([U, Val, Pere, A], Ps, New_Pu),
     %d�veloppement de U
-    Val = [_, _, Gu],
+    Val = [FU, HU, Gu],
     expand(U, List_Succes, Gu),
-    loop_successors(List_Succes,U, New_Pu, New_Pf, FinalPu, FinalPf,Qs),
+    loop_successors(List_Succes, New_Pu, New_Pf, FinalPu, FinalPf,Qs),
 
     insert([U,Val, Pere, A], Qs, Q),
     aetoile(FinalPf, FinalPu, Q).
@@ -133,22 +136,91 @@ param(S, Gu, [F,H,G]) :-
     G is (Gu +1) , 
     F is (G + H).
 
+
+loop_successors([],Pui,Pfi,Puf,Pff,_Q) :-
+    %writeln("LooPuucc 1"),
+    Puf = Pui,
+    Pff = Pfi.
+
+
+loop_successors([[S,[Fs,Hs,Gs],U,A]|Rest],Pui,Pfi,Puf,Pff,Q):-
+    %writeln("LooPuucc 3"),
+    (belongs([S,_,_,_],Q)->
+        Puaux = Pui,
+        Pfaux = Pfi
+    ;
+        (suppress([S,[Fs1,Hs1,Gs1],OldPere,OldA],Pui,Put)->
+            ([Fs,Hs,Gs] @< [Fs1,Hs1,Gs1] ->
+                suppress([[Fs1,Hs1,Gs1],S],Pfi,Pft),
+                insert([[Fs,Hs,Gs],S],Pft,Pfaux),
+                insert([S,[Fs,Hs,Gs],U,A],Put,Puaux)   
+            ; %else
+            Puaux = Pui,
+            Pfaux = Pfi
+            )
+        ; %else
+        insert([[Fs,Hs,Gs],S],Pfi,Pfaux),
+        insert([S,[Fs,Hs,Gs],U,A],Pui,Puaux)
+        )
+    ),
+    loop_successors(Rest,Puaux,Pfaux,Puf,Pff,Q).
+/*loop_successors([[S,[Fs,Hs,Gs],U,A]|Rest],Pui,Pfi,Puf,Pff,Q):-
+
 loop_successors([],_,Pu, Pf, Pu, Pf,_).
 loop_successors([D|R],U, Pu, Pf, FinalPu, FinalPf,Q) :-
-write("loop\n"),
-    handle_succes(D,U, Pu, Pf, TmpPu, TmpPf,Q),    
+    write("loop\n"), 
+    (belongs([S,_,_,_],Q)->
+        Puaux = Pu,
+        Pfaux = Pf
+    ;
+        (suppress([S,[Fs1,Hs1,Gs1],OldPere,OldA],Pu,Put)->
+            ([Fs,Hs,Gs] @< [Fs1,Hs1,Gs1] ->
+                suppress([[Fs1,Hs1,Gs1],S],Pf,Pft),
+                insert([[Fs,Hs,Gs],S],Pft,Pfaux),
+                insert([S,[Fs,Hs,Gs],U,A],Put,Puaux)   
+            ; %else
+            Puaux = Pu,
+            Pfaux = Pf
+            )
+        ; %else
+        insert([[Fs,Hs,Gs],S],Pf,Pfaux),
+        insert([S,[Fs,Hs,Gs],U,A],Pu,Puaux)
+        )
+    ),  
     loop_successors(R,U, TmpPu, TmpPf, FinalPu, FinalPf,Q).
 
 
+
+
+handle_success([Succ,[Fs,Hs,Gs],U,A],U, Pu, Pf, NewPu, NewPf,Q):-
+    (belongs([Succ, _, _, _], Q) -> 
+        NewPu = Pu,
+        NewPf = Pf,
+        ;
+        (suppress([Succ,[F1, H1, G1], U, A], Pu, NewPu) ->
+            ([Fs, Hs, Gs] @< [F1, H1, G1] ->
+                suppress([[F1,H1,G1],Succ],Pf,NewPf),
+                insert([[Fs,Hs,Gs],Succ],NewPf,TmpPf),
+                insert([[Fs,Hs,Gs], Succ], NewPu, TmpPu)
+            ;   
+                
+             
+            )
+
+        )
+    )
+
+
 handle_succes([_, S, _],_, _, _, _, _, Q):-    
-    belongs([S, _, _, _], Q),write("belongs\n").
+    belongs([S, _, _, _], Q),
+    put_flat(Q),
+    write("belongs\n").
 
 handle_succes([[F,H,G], S,A], U, Pu, Pf, FinalPu, FinalPf,_) :-
-    belongs([S,[F1, H1, G1], _, _], Pu),
-    F < F1,
-    write("plus petit\n"),
-    suppress([S,[F1, H1, G1], _, _], Pu, NewPu),
+    suppress([S,[F1, H1, G1], Pere, Action], Pu, NewPu),
     suppress([[F1, H1, G1],S], Pf, NewPf),
+    [F, H, G] @< [F1, H1, G1],
+    write("plus petit\n"),
 
     insert([[F,H,G],S],NewPf,FinalPf),
     insert([S,[F,H,G],U,A],NewPu,FinalPu).
@@ -156,8 +228,10 @@ handle_succes([[F,H,G], S,A], U, Pu, Pf, FinalPu, FinalPf,_) :-
 handle_succes([[F,H,G], S,A], U, Pu, Pf, FinalPu, FinalPf,_) :-
     insert([[F,H,G],S],Pf,FinalPf),
     insert([S,[F,H,G],U,A],Pu,FinalPu),
+    put_flat(FinalPf),
+    put_flat(FinalPu),
     write("insere\n").
-
+*/
 
 
 
