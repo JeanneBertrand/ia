@@ -144,15 +144,50 @@ meilleur([[CX,VX]|L], Meilleur) :-
   	PROGRAMME PRINCIPAL
   	*******************/
 
-main(B,V, Pmax) :-
-
-	true.        
+main(C,V, Pmax) :-
+	situation_initiale(S), 
+	joueur_initial(J), 
+	negamax(J, S, 1, Pmax, [C, V]).
 
 
 	/*
 A FAIRE :
-	Compléter puis tester le programme principal pour plusieurs valeurs de la profondeur maximale.
+	Complï¿½ter puis tester le programme principal pour plusieurs valeurs de la profondeur maximale.
 	Pmax = 1, 2, 3, 4 ...
-	Commentez les résultats obtenus.
+	Commentez les rï¿½sultats obtenus.
 	*/
 
+/*10 ?- main(C, V, 1).
+C = rien,
+V = 0 .
+
+11 ?- main(C, V, 2).
+C = [2, 2],
+V = 4 .
+
+12 ?- main(C, V, 3).
+C = [2, 2],
+V = 1 .
+
+13 ?- main(C, V, 4).
+C = [2, 2],
+V = 3 .
+
+2 ?- main(C, V, 5). Ã  partir de 5 il faut augmenter la taille de la stack "swipl -G100g -T20g -L2g"
+C = [2, 2],
+V = 1 .
+
+3 ?- main(C, V, 6).
+C = [2, 2],
+V = 3
+
+4 ?- main(C, V, 7).
+C = [2, 2],
+V = 1 
+
+pour 8 pareil, stack pas assez grande
+
+
+
+
+*/

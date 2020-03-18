@@ -26,7 +26,7 @@
 	*/
 
 situation_initiale([ [_,_,_],
-                     [_,x,_],
+                     [_,_,_],
                      [_,_,_] ]).
 
 situation_test([[x,_,_], 
