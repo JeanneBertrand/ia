@@ -107,33 +107,16 @@ aetoile(_,Pu,Q,Ini) :-
 
 
 aetoile(Pf, Pu, Qs,Ini) :-
-    %suppression de U
-    /*write("Pf ini\n"),
-    put_flat(Pf),
-    */
+    
     suppress_min([[FU, HU, Gu], U], Pf, New_Pf),
-    /*
-    write("\nsupp1\n"),
-    put_flat(New_Pf),
-    write("chgmt Pf\n"),
-    */
     suppress([U, [FU, HU, Gu], Pere, A], Pu, New_Pu),
     
 
     %d�veloppement de U
     expand(U, List_Succes, Gu),
-    /*
-    write("value U\n"),
-    write(U),
-    write("\n List succ\n"),
-    write(List_Succes),
-    write("\n Pu ini\n"),
-    put_flat(New_Pu),
-    write("\n Pf ini\n"),
-    put_flat(New_Pf),
-    */
+  
     loop_successors(List_Succes, U, New_Pu, New_Pf, FinalPu, FinalPf,Qs),
-    %write("loop\n"),
+
     insert([U,[FU, HU, Gu], Pere, A], Qs, Q),
     aetoile(FinalPf, FinalPu, Q,Ini).
 
