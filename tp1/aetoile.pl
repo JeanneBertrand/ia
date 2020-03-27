@@ -51,14 +51,14 @@ main :-
 
     %initial_state_deux(S0),
     initial_state_dix(S0),
-      %initial_state_v(S0),
-   % initial_state_t(S0),
+    %initial_state_v(S0),
+    %initial_state_t(S0),
     %initial_state_imp(S0),
 
     %situations de depart (4x4) a tester :
     %ATTENTION pour tester en 4x4 il faut aussi changer le final_state dans le predicat aetoile (deuxieme clause)
 
-   % initial_state_4x4(S0),
+    %initial_state_4x4(S0),
     
     launch(S0),
 

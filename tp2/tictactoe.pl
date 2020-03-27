@@ -29,9 +29,6 @@ situation_initiale([ [_,_,_],
                      [_,_,_],
                      [_,_,_] ]).
 
-situation_test([[x,_,_], 
-                [_,_,o],
-                [_,_,_]]).
 	% Convention (arbitraire) : c'est x qui commence
 
 joueur_initial(x).

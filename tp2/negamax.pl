@@ -145,17 +145,17 @@ meilleur([[CX,VX]|L], Meilleur) :-
   	*******************/
 
 main(C,V, Pmax) :-
+	statistics(runtime, [Start1,_]),
 	situation_initiale(S), 
 	joueur_initial(J), 
-	negamax(J, S, 1, Pmax, [C, V]).
+	negamax(J, S, 1, Pmax, [C, V]),
+	statistics(runtime, [Stop1,_]),
+    Runtime1 is Stop1 - Start1, % resultat en ms
+    write("\n execution time : "),
+    write(Runtime1),
+    write(" ms \n").
 
 
-	/*
-A FAIRE :
-	Compl�ter puis tester le programme principal pour plusieurs valeurs de la profondeur maximale.
-	Pmax = 1, 2, 3, 4 ...
-	Commentez les r�sultats obtenus.
-	*/
 
 /*10 ?- main(C, V, 1).
 C = rien,
