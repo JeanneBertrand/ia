@@ -1,3 +1,4 @@
+  
 %*******************************************************************************
 %                                    AETOILE
 %*******************************************************************************
@@ -14,30 +15,24 @@ Rappels sur l'algorithme
    
    Pu est le meme ensemble mais ordonne lexicographiquement (selon la donnee de
    l'etat). Il permet de retrouver facilement n'importe quel etat pendant
-
    On gere les 2 ensembles de fa�on synchronisee : chaque fois qu'on modifie
    (ajout ou retrait d'un etat dans Pf) on fait la meme chose dans Pu.
-
    Q est l'ensemble des etats deja developpes. Comme Pu, il permet de retrouver
    facilement un etat par la donnee de sa situation.
    Q est modelise par un seul arbre binaire de recherche equilibre.
-
 Predicat principal de l'algorithme :
-
    aetoile(Pf,Pu,Q)
-
    - reussit si Pf est vide ou bien contient un etat minimum terminal
    - sinon on prend un etat minimum U, on genere chaque successeur S et les valeurs g(S) et h(S)
-	 et pour chacun
-		si S appartient a Q, on l'oublie
-		si S appartient a Ps (etat deja rencontre), on compare
-			g(S)+h(S) avec la valeur deja calculee pour f(S)
-			si g(S)+h(S) < f(S) on reclasse S dans Pf avec les nouvelles valeurs
-				g et f 
-			sinon on ne touche pas a Pf
-		si S est entierement nouveau on l'insere dans Pf et dans Ps
-	- appelle recursivement etoile avec les nouvelles valeurs NewPF, NewPs, NewQs
-
+     et pour chacun
+        si S appartient a Q, on l'oublie
+        si S appartient a Ps (etat deja rencontre), on compare
+            g(S)+h(S) avec la valeur deja calculee pour f(S)
+            si g(S)+h(S) < f(S) on reclasse S dans Pf avec les nouvelles valeurs
+                g et f 
+            sinon on ne touche pas a Pf
+        si S est entierement nouveau on l'insere dans Pf et dans Ps
+    - appelle recursivement etoile avec les nouvelles valeurs NewPF, NewPs, NewQs
 */
 
 %*******************************************************************************
@@ -47,29 +42,37 @@ Predicat principal de l'algorithme :
 
 %*******************************************************************************
 
-lancement :-
+main :-
     statistics(runtime, [Start1,_]),
-    initial_state(S0),
-    main(S0),
+    
+
+    %situations de depart (3x3) a tester :
+
+
+    %initial_state_deux(S0),
+    initial_state_dix(S0),
+      %initial_state_v(S0),
+   % initial_state_t(S0),
+    %initial_state_imp(S0),
+
+    %situations de depart (4x4) a tester :
+    %ATTENTION pour tester en 4x4 il faut aussi changer le final_state dans le predicat aetoile (deuxieme clause)
+
+   % initial_state_4x4(S0),
+    
+    launch(S0),
+
     statistics(runtime, [Stop1,_]),
     Runtime1 is Stop1 - Start1, % resultat en ms
     write("\n execution time : "),
     write(Runtime1),
-    write("\n"),
-/*
-    statistics(runtime, [Start1,_]),
-    initial_state(S0),
-    main(S0),
-    statistics(runtime, [Stop1,_]),
-    Runtime1 is Stop1 - Start1, % resultat en ms
-    write("\n execution time : "),
-    write(Runtime1).
-    */
+    write(" ms \n").
 
-main(S0):-
+
+launch(S0):-
     heuristique(S0,H0),
     
-	% initialisations Pf, Pu et Q 
+    % initialisations Pf, Pu et Q 
 
     G0 is 0,
     F0 is H0+G0,
@@ -79,27 +82,31 @@ main(S0):-
     insert([S0, [F0,H0,G0],nil,nil], Pu, Pu2),
     
     % lancement de Aetoile
-    aetoile(Pf2, Pu2, Q).
+    aetoile(Pf2, Pu2, Q,S0).
 
 
   
   
 
 %*******************************************************************************
-aetoile(Pf,Pu,_) :- 
+aetoile(Pf,Pu,_,_) :- 
     empty(Pf), 
     empty(Pu),
     writeln("PAS DE SOLUTION : etat final non atteignable").
 
-aetoile(_,Pu,Q) :- 
-    final_state(Fin), 
+aetoile(_,Pu,Q,Ini) :- 
+
+    %Pour passer en 4x4 decommenter la ligne suivante et commentez l'autre final_state:
+   % final_state_4x4(Fin), 
+
+    final_state(Fin),
     belongs([Fin,[F1,H1,G1],P, A], Pu),
     insert([Fin,[F1,H1,G1],P,A],Q,Q1),
     write("solution : "),
-    affiche_solution(Fin,Pu,Q1).
+    affiche_solution(Fin,Q1,Ini).
 
 
-aetoile(Pf, Pu, Qs) :-
+aetoile(Pf, Pu, Qs,Ini) :-
     %suppression de U
     /*write("Pf ini\n"),
     put_flat(Pf),
@@ -118,20 +125,17 @@ aetoile(Pf, Pu, Qs) :-
     /*
     write("value U\n"),
     write(U),
-
     write("\n List succ\n"),
     write(List_Succes),
-
     write("\n Pu ini\n"),
     put_flat(New_Pu),
-
     write("\n Pf ini\n"),
     put_flat(New_Pf),
     */
     loop_successors(List_Succes, U, New_Pu, New_Pf, FinalPu, FinalPf,Qs),
     %write("loop\n"),
     insert([U,[FU, HU, Gu], Pere, A], Qs, Q),
-    aetoile(FinalPf, FinalPu, Q).
+    aetoile(FinalPf, FinalPu, Q,Ini).
 
 
 
@@ -140,16 +144,13 @@ aetoile(Pf, Pu, Qs) :-
 %   Affichage de la solution : affiche_solution
 %*************************************************
 
-
-affiche_solution(U,_Pu,_Q) :-
-    initial_state(U),
+% lorsque on a remmonté tout l'arbre Q jusqu'a la situation initiale : fin
+affiche_solution(Ini,_Q,Ini) :-
     !.
 
-affiche_solution(U,Pu,Q) :-
-    %writeln("SOLUTION"),
-    not(initial_state(U)),
+affiche_solution(U,Q,Ini) :-
     belongs([U,[_,_,_],Pere,A],Q),
-    affiche_solution(Pere,Pu,Q),
+    affiche_solution(Pere,Q,Ini),
     write(A),
     write(" -> ").
 

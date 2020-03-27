@@ -24,41 +24,58 @@ initial_state([ [b, h, c],       % C'EST L'EXEMPLE PRIS EN COURS
 
 
 
-initial_state_10([ [b, c, d],
+initial_state_dix([ [b, c, d],
                 [a,vide,g],
                 [f, h, e]  ]). % h2=10 f*=10
 
 % AUTRES EXEMPLES POUR LES TESTS DE  A*
 
 
-initial_state_2([ [ a, b, c],        
+initial_state_deux([ [ a, b, c],        
                 [ g, h, d],
                 [vide,f, e] ]). % h2=2, f*=2
-/*
-initial_state([ [b, c, d],
-                [a,vide,g],
-                [f, h, e]  ]). % h2=10 f*=10
+
+
 
 		
-initial_state([ [f, g, a],
+initial_state_v([ [f, g, a],
                 [h,vide,b],
                 [d, c, e]  ]). % h2=16, f*=20
-		
-initial_state([ [e, f, g],
+	
+initial_state_t([ [e, f, g],
                 [d,vide,h],
                 [c, b, a]  ]). % h2=24, f*=30 
 
-initial_state([ [a, b, c],
+initial_state_imp([ [a, b, c],
                 [g,vide,d],
-                [h, f, e]]). % etat non connexe avec l'etat final (PAS DE SOLUTION)
-*/  
+               [h, f, e]]). % etat non connexe avec l'etat final (PAS DE SOLUTION)
 
-
+initial_state_4x4([[ 2,vide,3, 4],
+    [1,5, 6, 7],
+    [10, 11,12,8],
+    [9, 13, 14, 15]]).
+ 
+initial_state_4x4_imp([[ 2,3,vide, 4],
+    [1,5, 6, 7],
+    [10, 11,12,8],
+    [9, 13, 14, 15]]).
+/*
+initial_state8([[1, 2, 3, 4],
+    [5, 6, 7,8],
+    [9, 10, 11,12],
+    [13, 14, vide, 15]]).
+*/
    %******************
    % ETAT FINAL DU JEU
    %******************
    % format :  final_state(+State) ou State est une matrice (liste de listes)
    
+
+final_state_4x4([[1, 2, 3, 4],
+    [5, 6, 7,8],
+    [9, 10, 11,12],
+    [13, 14, 15, vide]]).
+
 final_state([[a, b,  c],
              [h,vide, d],
              [g, f,  e]]).
