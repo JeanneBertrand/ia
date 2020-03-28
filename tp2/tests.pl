@@ -86,27 +86,49 @@ test_perdant :-
         
     write("test_perdant is complete ! \n").
 
-test_heuristique(H1, H2, H3, H4) :-
-    situation_gagnanteo(SO),
-    situation_gagnantex(SX),
-    situation_nulle(SN), 
-    heuristique(x, SX, H1),
-    %H1 = 1000, 
-    heuristique(o, SO, H2),
-    %H2 = 1000, 
-    heuristique(x, SN, H3),
-    heuristique(o, SN, H4),
-    
-    write("test_heuristique is complete ! \n").
-
-
-main :-
+/*Prédicat qui éxecute les trois tests d'alignements*/ 
+test_alignements :-
     alignements(Ali),
     write("alignements utilisés pour ces tests : \n"),
     write(Ali),
     write("\n"),
     test_possible,
     test_gagnant,
-    test_perdant,
-    test_heuristique.
+    test_perdant.
 
+/*Tests unitaires du prédicat heuristique(J, S, H) dans le cas de situation gagnante, perdante et nulle*/
+test_heuristique :-
+    situation_gagnanteo(SO),
+    situation_gagnantex(SX),
+    situation_nulle(SN),
+
+    heuristique(x, SX, H1),
+    H1 = 10000, 
+    heuristique(o, SO, H2),
+    H2 = 10000, 
+
+    heuristique(o, SX, H3),
+    H3 = -10000, 
+    heuristique(x, SO, H4),
+    H4 = -10000, 
+
+    heuristique(x, SN, H5),
+    H5 = 0, 
+    heuristique(o, SN, H6),
+    H6 = 0,
+
+    write("test_heuristique is complete ! \n").
+
+/*Tests unitaires du prédicat meilleur/2*/
+test_meilleur :-
+    meilleur([[2,3]], M1),
+    M1 = [2,3],
+    write("ok\n"), 
+
+    meilleur([[2,3],[3,1]], M2),
+    M2 = [3,1],
+    write("ok\n"),
+    
+    meilleur([[_,3],[_,1],[_,1]], M3),
+    M3 = [_,1],
+    write("test_meilleur is complete\n").
