@@ -42,6 +42,8 @@ Predicat principal de l'algorithme :
 
 %*******************************************************************************
 
+% POUR TESTER LE PROGRAMME UTILISER LE PREDICAT MAIN EN CHOISISSANT UNE SITUATION initiale
+
 main :-
     statistics(runtime, [Start1,_]),
     
@@ -137,6 +139,7 @@ affiche_solution(U,Q,Ini) :-
     write(A),
     write(" -> ").
 
+
 %************************************************************
 %   Determination des successeurs d'une situation et de leur
 %   évalution : expand 
@@ -148,6 +151,23 @@ param(S, Gu, [F,H,G]) :-
     heuristique(S, H), 
     G is (Gu +1) , 
     F is (G + H).
+
+
+test_expand :-
+  initial_state(S0),
+
+  write("Situation initiale : \n"),
+  write(S0),
+
+  expand(S0, List_Succes, 0),
+
+  write("\n Liste de successeurs possibles : \n"),
+  write(List_Succes).
+
+
+
+
+
 
 %*********************************************************
 %   Traitement des noeuds successeurs : loop_successors (recursif)
@@ -184,4 +204,4 @@ loop_successors([[S,[Fs,Hs,Gs],U,A]|R],U, Pu, Pf, FinalPu, FinalPf,Q) :-
     loop_successors(R,U, Puaux, Pfaux, FinalPu, FinalPf,Q).
 
 
-  
+

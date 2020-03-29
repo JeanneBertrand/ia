@@ -50,7 +50,7 @@ initial_state_imp([ [a, b, c],
                 [g,vide,d],
                [h, f, e]]). % etat non connexe avec l'etat final (PAS DE SOLUTION)
 
-initial_state_4x4([[ 2,vide,3, 4],
+initial_state_4x4([[ 2,3, 4,vide],
     [1,5, 6, 7],
     [10, 11,12,8],
     [9, 13, 14, 15]]).
@@ -59,12 +59,7 @@ initial_state_4x4_imp([[ 2,3,vide, 4],
     [1,5, 6, 7],
     [10, 11,12,8],
     [9, 13, 14, 15]]).
-/*
-initial_state8([[1, 2, 3, 4],
-    [5, 6, 7,8],
-    [9, 10, 11,12],
-    [13, 14, vide, 15]]).
-*/
+
    %******************
    % ETAT FINAL DU JEU
    %******************
@@ -80,9 +75,6 @@ final_state([[a, b,  c],
              [h,vide, d],
              [g, f,  e]]).
 
-initial_final_state([[a, vide,  c],
-             [h, b, d],
-             [g, f,  e]]).
 
 			 
 /* pour récupérer toute les cases qui sont déjà a la bonne place (état final)
@@ -201,48 +193,48 @@ heuristique(U,H) :-
     %heuristique1(U, H).  % au debut on utilise l'heuristique 1 
      heuristique2(U, H).  % ensuite utilisez plutot l'heuristique 2  
    
-   
-   %****************
-   %HEURISTIQUE no 1
-   %****************
-   % Nombre de pieces mal placees dans l'etat courant U
-   % par rapport a l'etat final F
+
+%****************
+%HEURISTIQUE no 1
+%****************
+% Nombre de pieces mal placees dans l'etat courant U
+% par rapport a l'etat final F
 
 
-    bienplace(X,M1,M2) :- 
-        coordonnees([L1,C1],M1,X),
-        coordonnees([L2,C2],M2,X),
-        (L1==L2, C1==C2).
+bienplace(X,M1,M2) :- 
+    coordonnees([L1,C1],M1,X),
+    coordonnees([L2,C2],M2,X),
+    (L1==L2, C1==C2).
 
-    heuristique1(U, H) :- 
-        final_state(Fin), 
-        findall(X, bienplace(X,U,Fin), BienPlace),
-        delete(BienPlace, vide, NewBienPlace),
-        length(NewBienPlace, R),
-        H is 8-R.
+heuristique1(U, H) :- 
+    final_state(Fin), 
+    findall(X, bienplace(X,U,Fin), BienPlace),
+    delete(BienPlace, vide, NewBienPlace),
+    length(NewBienPlace, R),
+    H is 8-R.
         
         
         
     
    
-   %****************
-   %HEURISTIQUE no 2
-   %****************
-   
-   % Somme des distances de Manhattan à parcourir par chaque piece
-   % entre sa position courante et sa positon dans l'etat final
+%****************
+%HEURISTIQUE no 2
+%****************
 
-  
-    dist_manhattan(X,M1,M2,Res) :-
-        coordonnees([L1,C1],M1,X),
-        coordonnees([L2,C2],M2,X),
-        X \== vide,
-        Res is (abs(L2-L1) + abs(C2-C1)).
-   
-    heuristique2(U, H) :-
-        final_state(Fin), 
-        findall(R,dist_manhattan(_,U,Fin,R),ResultList),
-        sumlist(ResultList, H).
+% Somme des distances de Manhattan à parcourir par chaque piece
+% entre sa position courante et sa positon dans l'etat final
+
+
+dist_manhattan(X,M1,M2,Res) :-
+    coordonnees([L1,C1],M1,X),
+    coordonnees([L2,C2],M2,X),
+    X \== vide,
+    Res is (abs(L2-L1) + abs(C2-C1)).
+
+heuristique2(U, H) :-
+    final_state(Fin), 
+    findall(R,dist_manhattan(_,U,Fin,R),ResultList),
+    sumlist(ResultList, H).
        
         
 
