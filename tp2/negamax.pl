@@ -156,38 +156,3 @@ main(C,V, Pmax) :-
     write(" ms \n").
 
 
-
-/*10 ?- main(C, V, 1).
-C = rien,
-V = 0 .
-
-11 ?- main(C, V, 2).
-C = [2, 2],
-V = 4 .
-
-12 ?- main(C, V, 3).
-C = [2, 2],
-V = 1 .
-
-13 ?- main(C, V, 4).
-C = [2, 2],
-V = 3 .
-
-2 ?- main(C, V, 5). à partir de 5 il faut augmenter la taille de la stack "swipl -G100g -T20g -L2g"
-C = [2, 2],
-V = 1 .
-
-3 ?- main(C, V, 6).
-C = [2, 2],
-V = 3
-
-4 ?- main(C, V, 7).
-C = [2, 2],
-V = 1 
-
-pour 8 pareil, stack pas assez grande
-
-
-
-
-*/
